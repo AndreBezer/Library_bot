@@ -1,7 +1,7 @@
 import telebot as tb
 import requests, json
 from app import recuperar_detalhe_coletivo, Book
-chave = "8119155152:AAGrH0QBrW0WwrM99oN0BaGFY-ckztucqec"
+chave = "_SUA_CHAVE_AQUI_"
 
 bot = tb.TeleBot(chave)
 
