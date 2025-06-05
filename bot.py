@@ -1,10 +1,14 @@
 import telebot as tb
 import requests, json
-from app import recuperar_detalhe_coletivo, Book
-chave = "_SUA_CHAVE_AQUI_"
+from app import recuperar_detalhe_coletivo, Book, del_book
+chave = "8119155152:AAGrH0QBrW0WwrM99oN0BaGFY-ckztucqec"
 
 bot = tb.TeleBot(chave)
 
+
+#╔═══════════════════════════════════════════════╗
+#║         ROTA PARA VER OS LIVROS SALVOS        ║
+#╚═══════════════════════════════════════════════╝
 @bot.message_handler(commands=["livros"])
 def buscar_livro(mensagem):
     url = "http://127.0.0.1:5000/api/book"
@@ -16,6 +20,10 @@ def buscar_livro(mensagem):
         autor = book["autor"]
         bot.send_message(mensagem.chat.id, f"{titulo} --- {autor}")
 
+
+#╔══════════════════════════════════════════╗
+#║         ROTA PARA ADICIONAR LIVRO        ║
+#╚══════════════════════════════════════════╝
 @bot.message_handler(commands=["add"])
 def add_livro(mensagem):
     global titulo_add
@@ -36,7 +44,6 @@ def add_livro(mensagem):
     url= "http://127.0.0.1:5000/api/book/add"
 
     status_add = mensagem.text.strip("/status").lstrip()
-    print(status_add)
     
     book = {
         "titulo" : titulo_add,
@@ -44,7 +51,27 @@ def add_livro(mensagem):
         "status" : status_add
     }
     requests.post(url, json=book)
+    
+    bot.send_message(mensagem.chat.id, "Livro adicionado com sucesso!")
 
+
+#╔══════════════════════════════════════════╗
+#║         ROTA PARA DELETAR LIVROS         ║
+#╚══════════════════════════════════════════╝
+@bot.message_handler(commands=["del"])
+def deletar_book(mensagem):
+    codigo = (mensagem.text.strip("/del")).split()
+    id = codigo[0]
+    
+    url= f"http://127.0.0.1:5000/api/book/delete/{id}"
+    requests.delete(url)
+    
+    bot.send_message(mensagem.chat.id, "Livro apagado com sucesso!")
+
+
+#╔══════════════════════════════╗
+#║         ROTA INICIAL         ║
+#╚══════════════════════════════╝
 @bot.message_handler(commands=["start"])
 def responder_start(mensagem):                                             
     bot.send_message(mensagem.chat.id, "Ola, seja bem vindo ao chat do Andre Bezer")                                                      
